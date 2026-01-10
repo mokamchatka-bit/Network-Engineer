@@ -397,3 +397,38 @@ S1-max(config)#exit
 >
 > **✅ Ответ:**
 > Full-duplex, 100Mb/s
+
+i.	Изучите флеш-память:
+
+
+S1-max# show flash:
+S1-max# dir flash:
+```cisco
+
+S1-max#
+S1-max#show fl
+S1-max#show flash: 
+Directory of flash:/
+
+1 -rw- 4670455 <no date> 2960-lanbasek9-mz.150-2.SE4.bin
+
+64016384 bytes total (59345929 bytes free)
+S1-max#dir flash
+Directory of flash:/
+
+1 -rw- 4670455 <no date> 2960-lanbasek9-mz.150-2.SE4.bin
+
+64016384 bytes total (59345929 bytes free)
+S1-max#dir flash:
+Directory of flash:/
+
+1 -rw- 4670455 <no date> 2960-lanbasek9-mz.150-2.SE4.bin
+
+64016384 bytes total (59345929 bytes free)
+S1-max#
+```
+> **❓ Вопрос:**
+> Какое имя присвоено образу Cisco IOS?
+>
+> **✅ Ответ:**
+> 2960-lanbasek9-mz.150-2.SE4.bin
