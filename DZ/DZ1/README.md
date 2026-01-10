@@ -183,9 +183,7 @@ b.	Изучите текущий файл running configuration:
 c.	Изучите файл загрузочной конфигурации (startup configuration), который содержится в энергонезависимом ОЗУ (NVRAM).
 > **❓ Вопрос:**  
 > Почему появляется это сообщение?
-
 > **✅ Ответ:**
-> 
 > Switch#show startup-config
 > startup-config is not present
 > 
