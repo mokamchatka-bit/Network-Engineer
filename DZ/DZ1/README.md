@@ -228,7 +228,6 @@ Received 0 broadcasts (0 IP multicast)
 >
 > **✅ Ответ:**   
 > 0001.c7a6.7e29
-`
 
 > **❓ Вопрос:**  
 Данный интерфейс включен?
@@ -240,4 +239,19 @@ Received 0 broadcasts (0 IP multicast)
 > interface Vlan1
 > no ip address
 > shutdown
+> ```
+
+e.	Изучите IP-свойства интерфейса SVI сети VLAN 1:
+
+Switch# show ip interface
+
+> **❓ Вопрос:**  
+Какие выходные данные вы видите?
+>
+> **✅ Ответ:**
+> VLAN 1  неактивен
+> ```cisco
+> Switch#show ip interface
+> Vlan1 is administratively down, line protocol is down
+> Internet protocol processing disabled
 > ```
