@@ -432,3 +432,324 @@ S1-max#
 >
 > **✅ Ответ:**
 > 2960-lanbasek9-mz.150-2.SE4.bin
+
+## Часть 2. Часть 2. Настройка базовых параметров сетевых устройств
+Во второй части необходимо будет настроить основные параметры коммутатора и компьютера.
+
+### Шаг 1. Шаг 1. Настройте базовые параметры коммутатора.
+a.	В режиме глобальной конфигурации скопируйте следующие базовые параметры конфигурации и вставьте их в файл на коммутаторе S1. 
+no ip domain-lookup
+
+hostname S1
+service password-encryption
+enable secret class
+banner motd #
+Unauthorized access is strictly prohibited. #
+
+S1-max>
+S1-max>enable
+S1-max#conf t
+Enter configuration commands, one per line. End with CNTL/Z.
+S1-max(config)#no ip domain-lookup
+S1-max(config)#hostname S1
+S1(config)#
+S1(config)#enable secret class
+S1(config)#
+S1(config)#ban
+S1(config)#banner motd #
+Enter TEXT message. End with the character '#'.
+Unauthorized access is strictly prohibited. 
+______________MAXIM_______________________#
+
+S1(config)#
+markdown
+## Часть 2. Настройка базовых параметров сетевых устройств
+
+### Шаг 2 Настройка базовых параметров коммутатора
+
+a. В режиме глобальной конфигурации скопируйте следующие базовые параметры конфигурации и вставьте их в файл на коммутаторе S1:
+
+> no ip domain-lookup
+> hostname S1
+> service password-encryption
+> enable secret class
+> banner motd #
+> Unauthorized access is strictly prohibited. #
+
+```cisco
+S1-max> enable
+S1-max# configure terminal
+S1-max(config)# no ip domain-lookup
+S1-max(config)# hostname S1
+S1(config)# enable secret class
+S1(config)# banner motd #
+Enter TEXT message. End with the character '#'.
+Unauthorized access is strictly prohibited.
+______________MAXIM_______________________#
+S1(config)#
+```
+b.	Назначьте IP-адрес интерфейсу SVI на коммутаторе. Благодаря этому вы получите возможность удаленного управления коммутатором.
+Прежде чем вы сможете управлять коммутатором S1 удаленно с компьютера PC-A, коммутатору нужно назначить IP-адрес. Согласно конфигурации по умолчанию коммутатором можно управлять через VLAN 1.v
+```cisco
+S1(config)#inter
+S1(config)#interface vlan 1
+S1(config-if)#ip ad
+S1(config-if)#ip address 192.168.1.2 255.255.255.0
+S1(config-if)#no shut
+S1(config-if)#no shutdown 
+
+S1(config-if)#
+%LINK-5-CHANGED: Interface Vlan1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to up
+
+S1(config-if)#exit
+S1(config)#
+```
+c.	Доступ через порт консоли также следует ограничить  с помощью пароля. Используйте cisco в качестве пароля для входа в консоль в этом задании. Конфигурация по умолчанию разрешает все консольные подключения без пароля. Чтобы консольные сообщения не прерывали выполнение команд, используйте параметр logging synchronous.
+S1(config)# line con 0
+S1(config-line)# logging synchronous 
+
+```cisco
+S1(config)#line co
+S1(config)#line console 0
+S1(config-line)#logging synchronous
+S1(config-line)#logg
+S1(config-line)#pass
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+```
+d. d.	Настройте каналы виртуального соединения для удаленного управления (vty), чтобы коммутатор разрешил доступ через Telnet. Если не настроить пароль VTY, будет невозможно подключиться к коммутатору по протоколу Telnet:
+
+```cisco
+S1(config-line)#logg
+S1(config-line)#pass
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#logging synchronous 
+^
+% Invalid input detected at '^' marker.
+S1(config)#conf t
+^
+% Invalid input detected at '^' marker.
+S1(config)#logging synchronous 
+^
+% Invalid input detected at '^' marker.
+S1(config)#logging synchronous
+^
+% Invalid input detected at '^' marker.
+S1(config)#line console 0
+S1(config-line)#logging synchronous
+S1(config-line)#exit
+S1(config)#line vty 0 15
+S1(config-line)#pass
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#tran
+S1(config-line)#transport inp
+S1(config-line)#transport input tel
+S1(config-line)#transport input telnet
+S1(config-line)#exit
+S1(config)#copy ru
+S1(config)#copy runn
+S1(config)#copy running-config startup-config
+^
+% Invalid input detected at '^' marker.
+S1(config)#exit
+S1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+S1#copy runn
+S1#copy running-config stsrt
+S1#copy running-config stsrtup-
+S1#copy running-config stsrtup-config
+^
+% Invalid input detected at '^' marker.
+S1#copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S1#
+```
+> **❓ Вопрос:**
+> Для чего нужна команда login?
+>
+> **✅ Ответ:**
+> требуется для включения проверки пароля на линии
+
+### Шаг 2. Настройте IP-адрес на компьютере PC-A
+
+Назначьте компьютеру IP-адрес и маску подсети в соответствии с таблицей адресации:
+
+1)	Перейдите в Панель управления. (Control Panel)
+2)	В представлении «Категория» выберите « Просмотр состояния сети и задач».
+3)	Щелкните Изменение параметров адаптера на левой панели.
+4)	Щелкните правой кнопкой мыши интерфейс Ethernet и выберите «Свойства» .
+5)	Выберите Протокол Интернета версии 4 (TCP/IPv4) > Свойства.
+6)	Выберите Использовать следующий IP-адрес и введите IP-адрес и маску подсети  и нажмите ОК.
+
+<img width="823" height="434" alt="image" src="https://github.com/user-attachments/assets/15969572-0861-49c8-8f77-a9e9639f6beb" />
+
+## Часть 3. Проверка сетевых подключений
+
+В третьей части лабораторной работы вам предстоит проверить и задокументировать конфигурацию коммутатора, протестировать сквозное соединение между компьютером PC-A и коммутатором S1, а также протестировать возможность удаленного управления коммутатором.
+
+### Шаг 1. Отобразите конфигурацию коммутатора
+
+Используйте консольное подключение на компьютере PC-A для отображения и проверки конфигурации коммутатора. Команда `show run` позволяет постранично отобразить всю текущую конфигурацию. Для пролистывания используйте клавишу пробела.
+
+a. Пример конфигурации приведен ниже. Параметры, которые вы настроили, выделены желтым. Другие параметры конфигурации — значения IOS по умолчанию.
+```cisco
+S1#show running-config 
+Building configuration...
+
+Current configuration : 1409 bytes
+!
+version 15.0
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname S1
+!
+enable secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+no ip domain-lookup
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+interface FastEthernet0/1
+!
+interface FastEthernet0/2
+!
+interface FastEthernet0/3
+!
+interface FastEthernet0/4
+!
+interface FastEthernet0/5
+!
+interface FastEthernet0/6
+!
+interface FastEthernet0/7
+!
+interface FastEthernet0/8
+!
+interface FastEthernet0/9
+!
+interface FastEthernet0/10
+!
+interface FastEthernet0/11
+!
+interface FastEthernet0/12
+!
+interface FastEthernet0/13
+!
+interface FastEthernet0/14
+!
+interface FastEthernet0/15
+!
+interface FastEthernet0/16
+!
+interface FastEthernet0/17
+!
+interface FastEthernet0/18
+!
+interface FastEthernet0/19
+!
+interface FastEthernet0/20
+!
+interface FastEthernet0/21
+!
+interface FastEthernet0/22
+!
+interface FastEthernet0/23
+!
+interface FastEthernet0/24
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface Vlan1
+ip address 192.168.1.2 255.255.255.0
+!
+banner motd ^C
+Unauthorized access is strictly prohibited. 
+______________MAXIM_______________________^C
+!
+!
+!
+line con 0
+password 7 0822455D0A16
+logging synchronous
+login
+!
+line vty 0 4
+password 7 0822455D0A16
+login
+transport input telnet
+line vty 5 15
+password 7 0822455D0A16
+login
+transport input telnet
+!
+!
+!
+!
+end
+```
+
+b.	Проверьте параметры VLAN 1.
+S1# show interface vlan 1 
+<img width="1009" height="1035" alt="image" src="https://github.com/user-attachments/assets/fa006c7c-832c-4347-bba6-ef92606a7e89" />
+
+> **❓ Вопрос:**
+> Какова полоса пропускания этого интерфейса?
+>
+> **✅ Ответ:**
+> BW 100000 Kbit
+
+### Шаг 2. Протестируйте сквозное соединение, отправив эхо-запрос
+
+a.	В командной строке компьютера PC-A с помощью утилиты ping проверьте связь сначала с адресом PC-A.
+C:\> ping 192.168.1.10 
+b.	Из командной строки компьютера PC-A отправьте эхо-запрос на административный адрес интерфейса SVI коммутатора S1.
+C:\> ping 192.168.1.2
+Поскольку компьютеру PC-A нужно преобразовать МАС-адрес коммутатора S1 с помощью ARP, время ожидания передачи первого пакета может истечь. Если эхо-запрос не удается, найдите и устраните неполадки базовых настроек устройства. Проверьте как физические кабели, так и логическую адресацию.
+<img width="952" height="1039" alt="image" src="https://github.com/user-attachments/assets/905451df-70b2-44f0-ae42-26ec845655e7" />
+
+### Шаг 3. Проверьте удаленное управление коммутатором S1
+
+Шаг 3. Проверьте удаленное управление коммутатором S1.
+После этого используйте удаленный доступ к устройству с помощью Telnet. В этой лабораторной работе устройства PC-A и S1 расположены рядом. В производственной сети коммутатор может находиться в коммутационном шкафу на последнем этаже, в то время как административный компьютер находится на первом этаже. На данном этапе вам предстоит использовать Telnet для удаленного доступа к коммутатору S1 через его административный адрес SVI. Telnet — это не безопасный протокол, но вы можете использовать его для проверки удаленного доступа. В случае с Telnet вся информация, включая пароли и команды, отправляется через сеанс в незашифрованном виде. В последующих лабораторных работах вы будете использовать протокол SSH для удаленного доступа к сетевым устройствам.
+a.	Откройте Tera Term или другую программу эмуляции терминала с возможностью Telnet. 
+b.	Выберите сервер Telnet и укажите адрес управления SVI для подключения к S1.  Пароль: cisco.
+c.	После ввода пароля cisco вы окажетесь в командной строке пользовательского режима. Для перехода в исполнительский режим EXEC введите команду enable и используйте секретный пароль class.
+d.	Сохраните конфигурацию.
+e.	Чтобы завершить сеанс Telnet, введите exit.
+
+<img width="702" height="586" alt="image" src="https://github.com/user-attachments/assets/5427c401-c892-4c03-9824-1b1251447b73" />
+
+<img width="871" height="1221" alt="image" src="https://github.com/user-attachments/assets/e14f3fbb-6506-4ffc-874e-09e811aaa6e3" />
+
+## Вопросы для повторения
+
+> **❓ Вопрос:**  
+> Зачем необходимо настраивать пароль VTY для коммутатора?
+>
+> **✅ Ответ:**  
+> Для защиты удалённого доступа к коммутатору через Telnet или SSH.
+
+> **❓ Вопрос:**  
+> Что нужно сделать, чтобы пароли не отправлялись в незашифрованном виде?
+>
+> **✅ Ответ:**  
+> Использовать SSH вместо Telnet.
+
