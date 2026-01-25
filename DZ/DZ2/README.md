@@ -51,12 +51,63 @@ PC-A (192.168.1.1/24) --- F0/6 --- S1 (192.168.1.11/24) --- F0/1 --- S2 (192.168
 #### Шаг 1. Подключение сети согласно топологии
 - Соедините устройства кабелями Ethernet как показано на схеме
 - Для связи между коммутаторами используйте порты F0/1
+![2026-01-25_21-01](https://github.com/user-attachments/assets/f4964b9f-0b21-49d4-8ec7-94c1ad508265)
 
 #### Шаг 2. Настройка узлов ПК
 1. Назначьте PC-A IP-адрес: 192.168.1.1/24
-2. Назначьте PC-B IP-адрес: 192.168.1.2/24
-3. Шлюз по умолчанию не требуется
+```cisco
+Cisco Packet Tracer PC Command Line 1.0
+C:\>ipconfig
 
+FastEthernet0 Connection:(default port)
+
+  Connection-specific DNS Suffix..: 
+  Link-local IPv6 Address.........: FE80::202:17FF:FE8C:D413
+ IPv6 Address....................: ::
+   IPv4 Address....................: 192.168.1.1
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: ::
+                                     0.0.0.0
+
+Bluetooth Connection:
+
+   Connection-specific DNS Suffix..: 
+   Link-local IPv6 Address.........: ::
+   IPv6 Address....................: ::
+   IPv4 Address....................: 0.0.0.0
+   Subnet Mask.....................: 0.0.0.0
+   Default Gateway.................: ::
+                                     0.0.0.0
+
+C:\>
+ ```  
+3. Назначьте PC-B IP-адрес: 192.168.1.2/24
+```cisco
+Cisco Packet Tracer PC Command Line 1.0
+C:\>ipconfig
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: 
+   Link-local IPv6 Address.........: FE80::260:2FFF:FE9E:7454
+   IPv6 Address....................: ::
+   IPv4 Address....................: 192.168.1.2
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: ::
+                                     0.0.0.0
+
+Bluetooth Connection:
+
+   Connection-specific DNS Suffix..: 
+   Link-local IPv6 Address.........: ::
+   IPv6 Address....................: ::
+   IPv4 Address....................: 0.0.0.0
+   Subnet Mask.....................: 0.0.0.0
+   Default Gateway.................: ::
+                                     0.0.0.0
+
+C:\>
+```
 #### Шаг 3. Выполните инициализацию и перезагрузку коммутаторов
 
 #### Шаг 4. Настройте базовые параметры каждого коммутатора
@@ -65,6 +116,99 @@ a.	Настройте имена устройств в соответствии 
 b.	Настройте IP-адреса, как указано в таблице адресации.
 c.	Назначьте cisco в качестве паролей консоли и VTY.
 d.	Назначьте class в качестве пароля доступа к привилегированному режиму EXEC.
+```cisco
+S1(config)#hostname S_1
+S_1(config)#interfac
+S_1(config)#interface vlan 1
+S_1(config-if)#ip adress 192.168.1.11 255.255.255.0
+                    ^
+% Invalid input detected at '^' marker.
+	
+S_1(config-if)#ip address 192.168.1.11 255.255.255.0
+S_1(config-if)#no shu
+S_1(config-if)#no shutdown 
+S_1(config-if)#exit
+S_1(config)#line vty 0 15
+S_1(config-line)#password cisco
+S_1(config-line)#login
+S_1(config-line)#exit
+S_1(config)#enable secret class
+S_1(config)#copy rurri
+S_1(config)#copy runni
+S_1(config)#copy running
+S_1(config)#copy running-c
+S_1(config)#copy running-con
+S_1(config)#copy running-config startup-config
+             ^
+% Invalid input detected at '^' marker.
+	
+S_1(config)#copy running-config startup-config
+             ^
+% Invalid input detected at '^' marker.
+	
+S_1(config)#end
+S_1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+S_1#copy running-config startup-config
+Destination filename [startup-config]? y
+%Error copying nvram:y (Invalid argument)
+S_1#copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S_1#
+```
+```cisco
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S_2
+S_2(config)#conf VLAN 1 
+             ^
+% Invalid input detected at '^' marker.
+	
+S_2(config)#config VLAN 1 
+             ^
+% Invalid input detected at '^' marker.
+	
+S_2(config)#inter
+S_2(config)#interface VLAN 1
+S_2(config-if)# ip addres
+S_2(config-if)# ip address 192.168.1.12 255.255.255.0
+S_2(config-if)#exit
+S_2(config)#line 0 15
+%Error: Line 1 is not in async mode
+S_2(config)#interface VLAN 1
+S_2(config-if)# ip address 192.168.1.12 255.255.255.0
+S_2(config-if)#no s
+S_2(config-if)#no shu
+S_2(config-if)#no shutdown 
+
+S_2(config-if)#
+%LINK-5-CHANGED: Interface Vlan1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to up
+
+S_2(config-if)#exit
+S_2(config)#line vty 0 15
+S_2(config-line)#pass
+S_2(config-line)#password cisco
+S_2(config-line)#login
+S_2(config-line)#exit
+S_2(config)#enable
+S_2(config)#enable secret class
+S_2(config)#exit
+S_2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+S_2#copy runn
+S_2#copy running-config start
+S_2#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S_2#
+```
 
 ### Часть 2. Изучение таблицы МАС-адресов коммутатора
 Как только между сетевыми устройствами начинается передача данных, коммутатор выясняет МАС-адреса и строит таблицу.
