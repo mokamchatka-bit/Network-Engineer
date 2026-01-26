@@ -321,7 +321,7 @@ FastEthernet0/1 is up, line protocol is up (connected)
 S_1>
 ```
 
-
+```cisco
 S_2>show interface F0/1
 FastEthernet0/1 is up, line protocol is up (connected)
   Hardware is Lance, address is 000c.cfdc.5b01 (bia 000c.cfdc.5b01)
@@ -348,7 +348,7 @@ FastEthernet0/1 is up, line protocol is up (connected)
      0 output errors, 0 collisions, 10 interface resets
      0 babbles, 0 late collision, 0 deferred
      0 lost carrier, 0 no carrier
-     0 output buffer failures, 0 output buffers swapped out```cisco
+     0 output buffer failures, 0 output buffers swapped out
 ```
 > **❓ Вопрос:**
 > Назовите адреса оборудования во второй строке выходных данных команды (или зашитый адрес — bia).
