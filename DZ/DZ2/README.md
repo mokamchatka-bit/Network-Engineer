@@ -215,11 +215,79 @@ S_2#
 
 #### Шаг 1. Запишите МАС-адреса сетевых устройств.
 a.	Откройте командную строку на PC-A и PC-B и введите команду ipconfig /all.
+```cisco
+C:\>ipconfig  /all
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: 
+   Physical Address................: 0002.178C.D413
+   Link-local IPv6 Address.........: FE80::202:17FF:FE8C:D413
+   IPv6 Address....................: ::
+   IPv4 Address....................: 192.168.1.1
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: ::
+                                     0.0.0.0
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 
+   DHCPv6 Client DUID..............: 00-01-00-01-68-B7-D3-B0-00-02-17-8C-D4-13
+   DNS Servers.....................: ::
+                                     0.0.0.0
+
+Bluetooth Connection:
+
+   Connection-specific DNS Suffix..: 
+   Physical Address................: 00D0.5818.60E0
+   Link-local IPv6 Address.........: ::
+
+C:\>
+```
+
+```cisco
+C:\>ipconfig /all
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: 
+   Physical Address................: 0060.2F9E.7454
+   Link-local IPv6 Address.........: FE80::260:2FFF:FE9E:7454
+   IPv6 Address....................: ::
+   IPv4 Address....................: 192.168.1.2
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: ::
+                                     0.0.0.0
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 
+   DHCPv6 Client DUID..............: 00-01-00-01-BC-7A-A1-13-00-60-2F-9E-74-54
+   DNS Servers.....................: ::
+                                     0.0.0.0
+
+Bluetooth Connection:
+
+   Connection-specific DNS Suffix..: 
+   Physical Address................: 0002.16DB.4B58
+   Link-local IPv6 Address.........: ::
+   IPv6 Address....................: ::
+   IPv4 Address....................: 0.0.0.0
+   Subnet Mask.....................: 0.0.0.0
+   Default Gateway.................: ::
+                                     0.0.0.0
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 
+   DHCPv6 Client DUID..............: 00-01-00-01-BC-7A-A1-13-00-60-2F-9E-74-54
+   DNS Servers.....................: ::
+                                     0.0.0.0
+
+C:\>
+```
+
 - Открытие окна командной строки Windows
 > **❓ Вопрос:**
 > Назовите физические адреса адаптера Ethernet.
->  **✅ Ответ:** MAC-адрес компьютера PC-A:
->  **✅ Ответ:** MAC-адрес компьютера PC-B:
+
+>  **✅ Ответ:** MAC-адрес компьютера PC-A: 0002.178C.D413
+
+>  **✅ Ответ:** MAC-адрес компьютера PC-B: 0060.2F9E.7454
 
 b.	Подключитесь к коммутаторам S1 и S2 через консоль и введите команду show interface F0/1 на каждом коммутаторе.
 
