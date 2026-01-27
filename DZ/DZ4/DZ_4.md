@@ -1,6 +1,9 @@
-# Топология
+# *Лабораторная работа. Настройка IPv6-адресов на сетевых устройствах*
 
-![This topology has two PCs, a router R1 and a switch S1. PC-A is connected to switch S1 F0/6. Switch S1 F0/5 is connected to R1 G0/0/1. Router R1 g0/0/0 is connected to PC-B.](media/image1.png)
+# Топология
+<img width="952" height="128" alt="image" src="https://github.com/user-attachments/assets/dfd35407-84a5-422a-b316-6f6791933f28" />
+
+
 
 # Таблица адресации
 
