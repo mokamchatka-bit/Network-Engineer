@@ -46,15 +46,15 @@ Secure Shell (SSH) — это сетевой протокол, устанавл�
 
 # Инструкции
 
-## Настройка основных параметров устройств
+## Часть 1. Настройка основных параметров устройства
 
 В части 1 потребуется настроить топологию сети и основные параметры, такие как IP-адреса интерфейсов, доступ к устройствам и пароли на маршрутизаторе.
 
-### Создайте сеть согласно топологии.
+### Шаг 1. Создайте сеть согласно топологии.
 
-### Выполните инициализацию и перезагрузку маршрутизатора и коммутатора.
+### Шаг 2. Выполните инициализацию и перезагрузку маршрутизатора и коммутатора.
 
-### Настройте маршрутизатор.
+### Шаг 3. Настройте маршрутизатор.
 
 Откройте окно конфигурации
 
@@ -83,7 +83,72 @@ j. Сохраните текущую конфигурацию в файл заг
 a. Настройте для PC-A IP-адрес и маску подсети.
 
 b. Настройте для PC-A шлюз по умолчанию.
+'''cisco
+Router>en
+Router#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostn
+Router(config)#hostname R1
+R1(config)#no ip doma
+R1(config)#no ip domam
+R1(config)#no ip don
+R1(config)#no ip domain
+R1(config)#no ip domain-lookup
+R1(config)#enable  secret class
+R1(config)#login
+% Incomplete command.
+R1(config)#lin
+R1(config)#line con
+R1(config)#line console 0
+R1(config-line)#password cisco
+R1(config-line)#login
+R1(config-line)#exit
+R1(config)#line vti 0 15
+                ^
+% Invalid input detected at '^' marker.
+	
+R1(config)#line vty 0 15
+R1(config-line)#password cisco
+R1(config-line)#login
+R1(config-line)#exit
+R1(config)#ser
+R1(config)#service passw
+R1(config)#service password-encryption 
+R1(config)#baner
+R1(config)#baner mo
+R1(config)#baner motd # *****ZAPRET OT MAXIM*****#
+              ^
+% Invalid input detected at '^' marker.
+	
+R1(config)#baner motd #ZAPRET OT MAXIM#
+              ^
+% Invalid input detected at '^' marker.
+	
+R1(config)#banner motd #ZAPRET OT MAXIM#
+R1(config)#it
+R1(config)#inter
+R1(config)#interface g0/0/1
+R1(config-if)#ip ad
+R1(config-if)#ip address 192.68.1.1 255.255.255.0
+R1(config-if)#no shut
+R1(config-if)#no shutdown 
 
+R1(config-if)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1, changed state to up
+exit
+R1(config)#end
+R1#
+%SYS-5-CONFIG_I: Configured from console by console
+copy ru
+R1#copy running-config st
+R1#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+R1#
+'''
 ### Проверьте подключение к сети.
 
 Пошлите с PC-A команду Ping на маршрутизатор R1. Если эхо-запрос с помощью команды ping не проходит, найдите и устраните неполадки подключения.
