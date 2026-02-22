@@ -233,15 +233,72 @@ S2#
 <img width="713" height="683" alt="2026-02-23_00-40-02" src="https://github.com/user-attachments/assets/f7bc72ec-2161-4434-88bd-fb786adee637" />
 
 
-## Создание сетей VLAN и назначение портов коммутатора
+## Часть 3. Создание сетей VLAN и назначение портов коммутатора
 
 Во второй части вы создадите VLAN, как указано в таблице выше, на обоих коммутаторах. Затем вы назначите VLAN соответствующему интерфейсу и проверите настройки конфигурации. Выполните следующие задачи на каждом коммутаторе.
 
-### Создайте сети VLAN на коммутаторах.
+### Шаг 1. Создайте сети VLAN на коммутаторах.
 
 a. Создайте и назовите необходимые VLAN на каждом коммутаторе из таблицы выше.
+```cisco
+S1>en
+Password: 
+Password: 
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#vlan 10
+S1(config-vlan)#name Upravlenie
+S1(config-vlan)#end
+S1#
+%SYS-5-CONFIG_I: Configured from console by console
 
-Откройте окно конфигурации
+S1#vlan 20
+        ^
+% Invalid input detected at '^' marker.
+	
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#vlan 20
+S1(config-vlan)#name Sales
+S1(config-vlan)#vlan 30
+S1(config-vlan)#name Operations
+S1(config-vlan)#vlan 999
+S1(config-vlan)#name Parking_Lot
+S1(config-vlan)#vlan 1000
+S1(config-vlan)#name Native
+S1(config-vlan)#end
+S1#
+%SYS-5-CONFIG_I: Configured from console by console
+```
+<img width="1373" height="694" alt="image" src="https://github.com/user-attachments/assets/05871298-12fc-40c0-a9a3-9ce5009a667c" />
+
+```cisco
+S2_Lab_Maxim
+
+User Access Verification
+
+Password: 
+
+S2>en
+Password: 
+S2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S2(config)#vlan 10
+S2(config-vlan)#name Upravlenie
+S2(config-vlan)#vlan 20
+S2(config-vlan)#name Sales
+S2(config-vlan)#vlan 30
+S2(config-vlan)#name Operations
+S2(config-vlan)#vlan 999
+S2(config-vlan)#name Parking_Lot
+S2(config-vlan)#vlan 1000
+S2(config-vlan)#name Native
+S2(config-vlan)#end
+S2#
+%SYS-5-CONFIG_I: Configured from console by console
+```
+<img width="1431" height="629" alt="image" src="https://github.com/user-attachments/assets/8edd7dee-a179-4e5a-9ffe-a067b3145a90" />
+
 
 b. Настройте интерфейс управления и шлюз по умолчанию на каждом коммутаторе, используя информацию об IP-адресе в таблице адресации.
 
@@ -249,7 +306,7 @@ c. Назначьте все неиспользуемые порты комму�
 
     **Примечание.** Команда interface range полезна для выполнения этой задачи с минимальным количеством команд.
 
-### Назначьте сети VLAN соответствующим интерфейсам коммутатора.
+###  Шаг 2. Назначьте сети VLAN соответствующим интерфейсам коммутатора.
 
 a. Назначьте используемые порты соответствующей VLAN (указанной в таблице VLAN выше) и настройте их для режима статического доступа.
 
