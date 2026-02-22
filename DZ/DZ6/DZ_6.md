@@ -188,14 +188,50 @@ S1#
 ```
 
 ```cisco
+Switch>en
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S2
+S2(config)#no ip domain_l
+S2(config)#no ip domain-l
+S2(config)#no ip domain-lookup 
+S2(config)#enable secret class
+S2(config)#line console 0
+S2(config-line)#password cisco
+S2(config-line)#login
+S2(config-line)#exit
+S2(config)#line vty 0 15
+S2(config-line)#password cisco
+S2(config-line)#login
+S2(config-line)#exit
+S2(config)#servise oassword-e
+S2(config)#servise password-e
+S2(config)#servise password-en
+S2(config)#service password-e
+S2(config)#service password-encryption 
+S2(config)#banner mo
+S2(config)#banner motd #S2_Lab_Maxim#
+S2(config)#end
+S2#
+%SYS-5-CONFIG_I: Configured from console by console
 
+S2#clock set 00:33:00 23 Feb 2026
+S2#cppy r
+S2#copy r
+S2#copy running-config st
+S2#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S2#
 ```
-
 
 
 ### Шаг 3.  Настройке узлов ПК.
 
-Адреса ПК можно посмотреть в таблице адресации.
+<img width="701" height="683" alt="2026-02-23_00-40-33" src="https://github.com/user-attachments/assets/d23b8e8f-ccbf-42c6-9dc9-a5e25e8adeee" />
+<img width="713" height="683" alt="2026-02-23_00-40-02" src="https://github.com/user-attachments/assets/f7bc72ec-2161-4434-88bd-fb786adee637" />
+
 
 ## Создание сетей VLAN и назначение портов коммутатора
 
