@@ -76,52 +76,124 @@
 ### Шаг 1. Настройте базовые параметры для маршрутизатора.
 
 a. Подключитесь к маршрутизатору с помощью консоли и активируйте привилегированный режим EXEC.
-
 b. Войдите в режим конфигурации.
-
 c. Назначьте маршрутизатору имя устройства.
-
 d. Отключите поиск DNS, чтобы предотвратить попытки маршрутизатора неверно преобразовывать введенные команды таким образом, как будто они являются именами узлов.
-
 e. Назначьте **class** в качестве зашифрованного пароля привилегированного режима EXEC.
-
 f. Назначьте **cisco** в качестве пароля консоли и включите вход в систему по паролю.
-
 g. Установите **cisco** в качестве пароля виртуального терминала и активируйте вход.
-
 h. Зашифруйте открытые пароли.
-
 i. Создайте баннер с предупреждением о запрете несанкционированного доступа к устройству.
-
 j. Сохраните текущую конфигурацию в файл загрузочной конфигурации.
-
 k. Настройте на маршрутизаторе время.
 
+```cisco
+Router>en
+Router#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname R1
+R1(config)#no ip domain-l
+R1(config)#no ip domain-lookup 
+R1(config)#en sec
+R1(config)#en secr
+R1(config)#en secret class
+% Ambiguous command: "en secret class"
+R1(config)#enable secret class
+R1(config)#line con
+R1(config)#line console 0
+R1(config-line)#pass
+R1(config-line)#password cisco
+R1(config-line)#login
+R1(config-line)#exit
+R1(config)#line vty 0 15
+R1(config-line)#pass
+R1(config-line)#password cisco
+R1(config-line)#login 
+R1(config-line)#exit
+R1(config)#serv
+R1(config)#service pass
+R1(config)#service password-encryption 
+R1(config)#bann
+R1(config)#banner motd #R1_LaB_Maxim#
+R1(config)#end
+R1#
+%SYS-5-CONFIG_I: Configured from console by console
 
+R1#exit
+R1 con0 is now available
+Press RETURN to get started.
+R1_LaB_Maxim
 
-### Настройке базовые параметры каждого коммутатора.
+R1>en
+Password: 
+R1#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+
+R1#copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+R1#clock set 23:52:00 22 Feb 2026
+R1#
+```
+
+### Шаг 2. Настройке базовые параметры каждого коммутатора.
 
 a. Присвойте коммутатору имя устройства.
-
 b. Отключите поиск DNS, чтобы предотвратить попытки маршрутизатора неверно преобразовывать введенные команды таким образом, как будто они являются именами узлов.
-
 c. Назначьте **class** в качестве зашифрованного пароля привилегированного режима EXEC.
-
 d. Назначьте **cisco** в качестве пароля консоли и включите вход в систему по паролю.
-
 e. Установите **cisco** в качестве пароля виртуального терминала и активируйте вход.
-
 f. Зашифруйте открытые пароли.
-
 g. Создайте баннер с предупреждением о запрете несанкционированного доступа к устройству.
-
 h. Настройте на коммутаторах время.
-
 i. Сохранение текущей конфигурации в качестве начальной.
 
-Закройте окно настройки.
+```cisco
+Switch>en
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S1
+S1(config)#no ip domain-l
+S1(config)#no ip domain-lookup 
+S1(config)#enable secret class
+S1(config)#line con
+S1(config)#line console 0
+S1(config-line)#pass
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#line vty 0 15
+S1(config-line)#pass
+S1(config-line)#password cisco
+S1(config-line)#log
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#serv
+S1(config)#service password-e
+S1(config)#service password-encryption 
+S1(config)#banner motd #S1-LaB_Maxim#
+S1(config)#end
+S1#
+%SYS-5-CONFIG_I: Configured from console by console
 
-### Настройке узлов ПК.
+S1#clock set 00:23:00 23 feb 2026
+S1#copy r
+S1#copy running-config st
+S1#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S1#
+```
+
+```cisco
+
+```
+
+
+
+### Шаг 3.  Настройке узлов ПК.
 
 Адреса ПК можно посмотреть в таблице адресации.
 
