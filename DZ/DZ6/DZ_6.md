@@ -299,12 +299,87 @@ S2#
 ```
 <img width="1431" height="629" alt="image" src="https://github.com/user-attachments/assets/8edd7dee-a179-4e5a-9ffe-a067b3145a90" />
 
-
 b. Настройте интерфейс управления и шлюз по умолчанию на каждом коммутаторе, используя информацию об IP-адресе в таблице адресации.
+```cisco
+S1>en
+Password: 
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#interf
+S1(config)#interface vlan 10
+S1(config-if)#
+%LINK-5-CHANGED: Interface Vlan10, changed state to up
 
+S1(config-if)#ip addr
+S1(config-if)#ip address 192.168.10.11 255.255.255.0
+S1(config-if)#no sh
+S1(config-if)#no shutdown 
+S1(config-if)#exit
+S1(config)#ip def
+S1(config)#ip default-gateway 192.168.10.1
+S1(config)#end
+S1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+S1#copy run
+S1#copy running-config st
+S1#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S1#
+```
+```cisco
+S2>en
+Password: 
+S2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S2(config)#inter
+S2(config)#interface vlan 10
+S2(config-if)#
+%LINK-5-CHANGED: Interface Vlan10, changed state to up
+ip addr
+S2(config-if)#ip address 192.168.10.1 255.255.255.0
+S2(config-if)#no shu
+S2(config-if)#no shutdown 
+S2(config-if)#exit
+S2(config)#ip gef
+S2(config)#ip gefayt
+S2(config)#ip gefaut
+S2(config)#ip gefault-
+S2(config)#ip default-gateway 192.168.10.1
+S2(config)#end
+S2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+S2#copy ru
+S2#copy running-config st
+S2#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S2#
+```
 c. Назначьте все неиспользуемые порты коммутатора VLAN Parking_Lot, настройте их для статического режима доступа и административно деактивируйте их.
-
     **Примечание.** Команда interface range полезна для выполнения этой задачи с минимальным количеством команд.
+	```cisco
+	S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#interface range f0/2-4, f0/7-24, g0/1-2
+S1(config-if-range)#switchport mode access
+S1(config-if-range)#switchport access vlan 999
+S1(config-if-range)#shutdown
+	```
+	```cisco
+S2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S2(config)#interface range f0/2-17, f0/19-24, g0/1-2
+S2(config-if-range)#switchport mode access
+S2(config-if-range)#switchport access vlan 999
+S2(config-if-range)#shutdown
+	```
+<img width="1038" height="798" alt="image" src="https://github.com/user-attachments/assets/75d2a195-9381-4ca5-916f-fa0158e8cd1a" />
+<img width="1005" height="780" alt="image" src="https://github.com/user-attachments/assets/b3b2cf63-7d73-408e-bb75-3340f81484d6" />
 
 ###  Шаг 2. Назначьте сети VLAN соответствующим интерфейсам коммутатора.
 
