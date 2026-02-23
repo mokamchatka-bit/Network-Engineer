@@ -339,7 +339,7 @@ S2(config)#interface vlan 10
 S2(config-if)#
 %LINK-5-CHANGED: Interface Vlan10, changed state to up
 ip addr
-S2(config-if)#ip address 192.168.10.1 255.255.255.0
+S2(config-if)#ip address 192.168.10.12 255.255.255.0
 S2(config-if)#no shu
 S2(config-if)#no shutdown 
 S2(config-if)#exit
