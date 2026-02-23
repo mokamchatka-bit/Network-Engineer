@@ -384,89 +384,229 @@ S2(config-if-range)#shutdown
 ###  Шаг 2. Назначьте сети VLAN соответствующим интерфейсам коммутатора.
 
 a. Назначьте используемые порты соответствующей VLAN (указанной в таблице VLAN выше) и настройте их для режима статического доступа.
-
+```cisco
+S1>en
+Password: 
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#inter
+S1(config)#interface f0/6
+S1(config-if)#swit
+S1(config-if)#switchport mode acc
+S1(config-if)#switchport mode access 
+S1(config-if)#switchport acce
+S1(config-if)#switchport access vlan 20
+S1(config-if)#descr
+S1(config-if)#description connection_to_PC-A
+S1(config-if)#end
+S1#
+```
+```cisco
+S2>en
+Password: 
+S2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S2(config)#inter
+S2(config)#interface f0/18
+S2(config-if)#swi
+S2(config-if)#switchport mode acc
+S2(config-if)#switchport mode access 
+S2(config-if)#switchport access vlan 30 
+S2(config-if)#description Connection_to_PC-B
+S2(config-if)#end
+S2#
+```
 b. Убедитесь, что VLAN назначены на правильные интерфейсы.
+<img width="1017" height="532" alt="image" src="https://github.com/user-attachments/assets/9c23b0a9-0be1-4109-9f16-7373810982df" />
+<img width="1022" height="534" alt="image" src="https://github.com/user-attachments/assets/cae066c4-4e9f-430a-93d2-ad62ef2600b1" />
 
-Закройте окно настройки.
+## Часть 4. Конфигурация магистрального канала стандарта 802.1Q между коммутаторами
+Настроите интерфейс F0/1 как транк.
 
-## Конфигурация магистрального канала стандарта 802.1Q между коммутаторами
-
-В части 3 вы вручную настроите интерфейс F0/1 как транк.
-
-### Вручную настройте магистральный интерфейс F0/1 на коммутаторах S1 и S2.
+### Шаг 1. Вручную настройте магистральный интерфейс F0/1 на коммутаторах S1 и S2.
 
 a. Настройка статического транкинга на интерфейсе F0/1 для обоих коммутаторов.
-
-Откройте окно конфигурации
-
 b. Установите native VLAN 1000 на обоих коммутаторах.
-
 c. Укажите, что VLAN 10, 20, 30 и 1000 могут проходить по транку.
+```cisco
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#int
+S1(config)#interface f0/1
+S1(config-if)#sw
+S1(config-if)#switchport m
+S1(config-if)#switchport mode tr
+S1(config-if)#switchport mode trunk 
 
+S1(config-if)#
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/1, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan10, changed state to up
+sw
+S1(config-if)#switchport tr
+S1(config-if)#switchport trunk nat
+S1(config-if)#switchport trunk native vlan 1000
+S1(config-if)#
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on FastEthernet0/1 (1000), with S2 FastEthernet0/1 (1).
+
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on FastEthernet0/1 (1000), with S2 FastEthernet0/1 (1).
+
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on FastEthernet0/1 (1000), with S2 FastEthernet0/1 (1).
+
+S1(config-if)#switchport trunk allowed vlan 10,20,30,1000
+S1(config-if)#end
+```
+```cisco
+S2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S2(config)#in
+S2(config)#interface f0/1
+S2(config-if)#sw
+S2(config-if)#switchport m
+S2(config-if)#switchport mode tr
+S2(config-if)#switchport mode trunk 
+S2(config-if)#sw
+S2(config-if)#switchport tr
+S2(config-if)#switchport trunk 
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on FastEthernet0/1 (1), with S1 FastEthswitchport mode trunk 
+S2(config-if)#switchport mode trunk nat
+S2(config-if)#switchport tr
+S2(config-if)#switchport trunk nat
+S2(config-if)#switchport trunk native vlan 1000
+S2(config-if)#%SPANTREE-2-UNBLOCK_CONSIST_PORT: Unblocking FastEthernet0/1 on VLAN1000. Port consistency restored.
+
+%SPANTREE-2-UNBLOCK_CONSIST_PORT: Unblocking FastEthernet0/1 on VLAN0001. Port consistency restored.
+
+S2(config-if)#switchport trunk allowed vlan 10,20,30,1000
+S2(config-if)#end
+S2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+S2#copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+```
 d. Проверьте транки, native VLAN и разрешенные VLAN через транк.
+<img width="895" height="585" alt="image" src="https://github.com/user-attachments/assets/77864152-b9c2-4716-8806-3d1536d996c4" />
+<img width="868" height="588" alt="image" src="https://github.com/user-attachments/assets/5a7bbb63-a900-455b-824e-f50c520e2705" />
 
 ### Вручную настройте магистральный интерфейс F0/5 на коммутаторе S1.
 
 a. Настройте интерфейс S1 F0/5 с теми же параметрами транка, что и F0/1. Это транк до маршрутизатора.
-
 b. Сохраните текущую конфигурацию в файл загрузочной конфигурации.
-
+```cisco
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#in
+S1(config)#interface f0/5
+S1(config-if)#sw
+S1(config-if)#switchport mo
+S1(config-if)#switchport mode tra
+S1(config-if)#switchport mode tru
+S1(config-if)#switchport mode trunk 
+S1(config-if)#switchport trunk 
+% Incomplete command.
+S1(config-if)#switchport trunk na
+S1(config-if)#switchport trunk native vlan 1000
+S1(config-if)#switchport trunk allowed vlan 10,20,30,1000
+S1(config-if)#description Link_to_R1_G0/0/1
+S1(config-if)#end
+```
 c. Проверка транкинга.
+<img width="1000" height="597" alt="image" src="https://github.com/user-attachments/assets/779f3093-b836-4a64-a4cd-fef2ce9ace21" />
 
-#### Вопрос:
-
+#### Вопрос: 
 Что произойдет, если G0/0/1 на R1 будет отключен?
 
-Закройте окно настройки.
+**На S1 интерфейс F0/5 останется в режиме транка, но его статус изменится на down (или notconnect), так как на другом конце кабеля нет активного устройства.**
 
-## Настройка маршрутизации между сетями VLAN
 
-### Настройке маршрутизатор.
+## Часть 5. Настройка маршрутизации между сетями VLAN
 
-Откройте окно конфигурации
+### Шаг 1. Настройке маршрутизатор.
 
 a. При необходимости активируйте интерфейс G0/0/1 на маршрутизаторе.
+<img width="1137" height="588" alt="image" src="https://github.com/user-attachments/assets/8211f60e-1137-4594-80da-522a3894476d" />
 
 b. Настройте подинтерфейсы для каждой VLAN, как указано в таблице IP-адресации. Все подинтерфейсы используют инкапсуляцию 802.1Q. Убедитесь, что подинтерфейсу для native VLAN не назначен IP-адрес. Включите описание для каждого подинтерфейса.
+```cisco
+R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#in
+R1(config)#interface g0/0/1.10
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1.10, changed state to up
 
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1.10, changed state to up
+description Management_VLAN_10
+R1(config-subif)#description Management_VLAN_10
+R1(config-subif)#encapsulation dot1Q 10
+R1(config-subif)#ip address 192.168.10.1 255.255.255.0
+R1(config-subif)#exit
+R1(config)#interface g0/0/1.20
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1.20, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1.20, changed state to up
+
+R1(config-subif)#description Sales_VLAN_20
+R1(config-subif)#encapsulation dot1Q 20
+R1(config-subif)#ip address 192.168.20.1 255.255.255.0
+R1(config-subif)#exit
+R1(config)#interface g0/0/1.30
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1.30, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1.30, changed state to up
+
+R1(config-subif)#description Operations_VLAN_30
+R1(config-subif)#encapsulation dot1Q 30
+R1(config-subif)#ip address 192.168.30.1 255.255.255.0
+R1(config-subif)#exit
+R1(config)#interface g0/0/1.1000
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1.1000, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1.1000, changed state to up
+
+R1(config-subif)#description Native_VLAN_1000
+R1(config-subif)#
+R1(config-subif)#encapsulation dot1Q 1000 native
+R1(config-subif)#no ip address
+R1(config-subif)#end
+R1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+R1#
+```
 c. Убедитесь, что вспомогательные интерфейсы работают
+<img width="1107" height="957" alt="image" src="https://github.com/user-attachments/assets/8f30964f-ea0b-45cf-9c56-8ed38e8b5854" />
 
-Закройте окно настройки.
-
-## Проверьте, работает ли маршрутизация между VLAN
+## Часть 6. Проверьте, работает ли маршрутизация между VLAN
 
 ### Выполните следующие тесты с PC-A. Все должно быть успешно.
 
 **Примечание.** Возможно, вам придется отключить брандмауэр ПК для работы ping
 
 a. Отправьте эхо-запрос с PC-A на шлюз по умолчанию.
+<img width="700" height="516" alt="image" src="https://github.com/user-attachments/assets/78dbeee4-53fb-4bdd-bdc4-aeaaeb5130aa" />
 
 b. Отправьте эхо-запрос с PC-A на PC-B.
+<img width="680" height="652" alt="image" src="https://github.com/user-attachments/assets/113de100-4343-4eda-b8e8-35207fe11d4d" />
 
 c. Отправьте команду ping с компьютера PC-A на коммутатор S2.
+<img width="843" height="743" alt="image" src="https://github.com/user-attachments/assets/ba59bbaf-90f0-43df-858e-84d97a03a62d" />
 
 ### Пройдите следующий тест с PC-B
 
 В окне командной строки на PC-B выполните команду **tracert** на адрес PC-A.
+<img width="702" height="414" alt="image" src="https://github.com/user-attachments/assets/ba1907b5-b6c6-4f87-a013-e85ed36bae9a" />
 
 #### Вопрос:
 
 Какие промежуточные IP-адреса отображаются в результатах?
 
-# Сводная таблица по интерфейсам маршрутизаторов
-
-| Модель маршрутизатора | Интерфейс Ethernet № 1              | Интерфейс Ethernet № 2              | Последовательный интерфейс № 1 | Последовательный интерфейс № 2 |
-|------------------------|-------------------------------------|-------------------------------------|--------------------------------|--------------------------------|
-| 1 800                  | Fast Ethernet 0/0 (F0/0)           | Fast Ethernet 0/1 (F0/1)           | Serial 0/0/0 (S0/0/0)         | Serial 0/0/1 (S0/0/1)         |
-| 1900                   | Gigabit Ethernet 0/0 (G0/0)        | Gigabit Ethernet 0/1 (G0/1)        | Serial 0/0/0 (S0/0/0)         | Serial 0/0/1 (S0/0/1)         |
-| 2801                   | Fast Ethernet 0/0 (F0/0)           | Fast Ethernet 0/1 (F0/1)           | Serial 0/1/0 (S0/1/0)         | Serial 0/1/1 (S0/1/1)         |
-| 2811                   | Fast Ethernet 0/0 (F0/0)           | Fast Ethernet 0/1 (F0/1)           | Serial 0/0/0 (S0/0/0)         | Serial 0/0/1 (S0/0/1)         |
-| 2900                   | Gigabit Ethernet 0/0 (G0/0)        | Gigabit Ethernet 0/1 (G0/1)        | Serial 0/0/0 (S0/0/0)         | Serial 0/0/1 (S0/0/1)         |
-| 4221                   | Gigabit Ethernet 0/0/0 (G0/0/0)    | Gigabit Ethernet 0/0/1 (G0/0/1)    | Serial 0/1/0 (S0/1/0)         | Serial 0/1/1 (S0/1/1)         |
-| 4300                   | Gigabit Ethernet 0/0/0 (G0/0/0)    | Gigabit Ethernet 0/0/1 (G0/0/1)    | Serial 0/1/0 (S0/1/0)         | Serial 0/1/1 (S0/1/1)         |
-
-В этой таблице представлен интерфейс маршрутизатора для каждой модели маршрутизатора для интерфейсов Ethernet 1 и 2, а также последовательные интерфейсы 1 и 2.
-
-**Примечание**. Чтобы определить конфигурацию маршрутизатора, можно посмотреть на интерфейсы и установить тип маршрутизатора и количество его интерфейсов. Перечислить все комбинации конфигураций для каждого класса маршрутизаторов невозможно. Эта таблица содержит идентификаторы для возможных комбинаций интерфейсов Ethernet и последовательных интерфейсов на устройстве. Другие типы интерфейсов в таблице не представлены, хотя они могут присутствовать в данном конкретном маршрутизаторе. В качестве примера можно привести интерфейс ISDN BRI. Строка в скобках — это официальное сокращение, которое можно использовать в командах Cisco IOS для обозначения интерфейса.
-
-Конец документа
+192.168.30.1 — это адрес субинтерфейса R1 G0/0/1.30, который является шлюзом по умолчанию для VLAN 30, в которой находится PC-B.
