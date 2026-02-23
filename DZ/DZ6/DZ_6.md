@@ -598,7 +598,8 @@ b. Отправьте эхо-запрос с PC-A на PC-B.
 <img width="680" height="652" alt="image" src="https://github.com/user-attachments/assets/113de100-4343-4eda-b8e8-35207fe11d4d" />
 
 c. Отправьте команду ping с компьютера PC-A на коммутатор S2.
-<img width="843" height="743" alt="image" src="https://github.com/user-attachments/assets/ba59bbaf-90f0-43df-858e-84d97a03a62d" />
+<img width="798" height="644" alt="image" src="https://github.com/user-attachments/assets/42ade486-88e6-4a0f-9136-ac10fb9c1401" />
+
 
 ### Пройдите следующий тест с PC-B
 
