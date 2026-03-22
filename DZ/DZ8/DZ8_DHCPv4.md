@@ -83,33 +83,69 @@ c.  Одна подсеть «Подсеть C», поддерживающая 1
     **Подсеть C:**
     Запишите первый IP-адрес в таблице адресации для R2 G0/0/1.
 
+| Вопрос | Ответ |
+|--------|-------|
+| Запишите первый IP-адрес в таблице адресации для R1 G0/0/1.100 | 192.168.1.1 |
+| Запишите первый IP-адрес в таблице адресации для R1 G0/0/1.200 | 192.168.1.65 |
+| Запишите второй IP-адрес в таблице адресов для S1 VLAN 200 и введите соответствующий шлюз по умолчанию | IP-адрес: 192.168.1.66<br>Шлюз по умолчанию: 192.168.1.65 |
+| Запишите первый IP-адрес в таблице адресации для R2 G0/0/1 | 192.168.1.97 |
+
 #### Шаг 2. Создайте сеть согласно топологии.
 
 > Подключите устройства, как показано в топологии, и подсоедините необходимые кабели.
 
 #### Шаг 3. Произведите базовую настройку маршрутизаторов.
 
-a.  Назначьте маршрутизатору имя устройства.
+*a.  Назначьте маршрутизатору имя устройства.*
+b.  Отключите поиск DNS, чтобы предотвратить попытки маршрутизатора неверно преобразовывать введенные команды таким образом, как будто они являются именами узлов.*
+*c.  Назначьте **class** в качестве зашифрованного пароля привилегированного режима EXEC.*
+*d.  Назначьте **cisco** в качестве пароля консоли и включите вход в систему по паролю.*
+*e.  Назначьте **cisco** в качестве пароля VTY и включите вход в систему по паролю.*
+*f.  Зашифруйте открытые пароли.*
+*g.  Создайте баннер с предупреждением о запрете несанкционированного доступа к устройству.*
+*h.  Сохраните текущую конфигурацию в файл загрузочной конфигурации.*
+*i.  Установите часы на маршрутизаторе на сегодняшнее время и дату.*
 
-    *Откройте окно конфигурации*
-
-b.  Отключите поиск DNS, чтобы предотвратить попытки маршрутизатора неверно преобразовывать введенные команды таким образом, как будто они являются именами узлов.
-
-c.  Назначьте **class** в качестве зашифрованного пароля привилегированного режима EXEC.
-
-d.  Назначьте **cisco** в качестве пароля консоли и включите вход в систему по паролю.
-
-e.  Назначьте **cisco** в качестве пароля VTY и включите вход в систему по паролю.
-
-f.  Зашифруйте открытые пароли.
-
-g.  Создайте баннер с предупреждением о запрете несанкционированного доступа к устройству.
-
-h.  Сохраните текущую конфигурацию в файл загрузочной конфигурации.
-
-i.  Установите часы на маршрутизаторе на сегодняшнее время и дату.
-
-> **Примечание.** Вопросительный знак (**?**) позволяет открыть справку с правильной последовательностью параметров, необходимых для выполнения этой команды.
+```cisco
+enable
+configure terminal
+hostname R1
+no ip domain-lookup
+enable secret class
+line console 0
+password cisco
+login
+exit
+line vty 0 4
+password cisco
+login
+exit
+service password-encryption
+banner motd #Unauthorized access is prohibited!#
+exit
+clock set 15:30:00 21 Mar 2026
+copy running-config startup-config
+```
+```cisco
+enable
+configure terminal
+hostname R2
+no ip domain-lookup
+enable secret class
+line console 0
+password cisco
+login
+exit
+line vty 0 4
+password cisco
+login
+exit
+service password-encryption
+banner motd #Unauthorized access is prohibited!#
+exit
+clock set 15:30:00 21 Mar 2026
+copy running-config startup-config
+```
 
 #### Шаг 4. Настройка маршрутизации между сетями VLAN на маршрутизаторе R1
 
@@ -119,59 +155,412 @@ b.  Настройте подинтерфейсы для каждой VLAN в с
 
 c.  Убедитесь, что вспомогательные интерфейсы работают.
 
+```cisco
+R1>en
+Password: 
+R1#conf t
+R1(config)#interf
+R1(config)#interface g0/0/1
+R1(config-if)#no shut
+R1(config-if)#no shutdown 
+R1(config-if)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1, changed state to up
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1, changed state to up
+R1(config-if)#exit
+R1(config)#inter
+R1(config)#interface f0/0/1.100
+%Invalid interface type and number
+R1(config)#interface g0/0/1.100
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1.100, changed state to up
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1.100, changed state to up
+R1(config-subif)#encap
+R1(config-subif)#encapsulation dot1q 100
+R1(config-subif)#descrip
+R1(config-subif)#description Client_VLAN_100
+R1(config-subif)#exit
+
+R1(config)#interface g0/0/1.200
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1.200, changed state to up
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1.200, changed state to up
+R1(config-subif)#encapsulation dot1q 200
+R1(config-subif)#description Management_VLAN_200
+R1(config-subif)#ip address 192.168.1.65 255.255.255.192
+R1(config-subif)#exit
+
+R1(config)#interface g0/0/1.100
+R1(config-subif)#ip addre
+R1(config-subif)#ip address 192.168.1.1 255.255.255.192
+R1(config-subif)#exit
+
+R1(config)#interface g0/0/1.200
+R1(config-subif)#ip address 192.168.1.65 255.255.255.224
+R1(config-subif)#exit
+
+R1(config)#inerf
+R1(config)#interface g0/0/1.1000
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1.1000, changed state to up
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1.1000, changed state to up
+R1(config-subif)#encapsulati
+R1(config-subif)#encapsulation dot1Q 1000 native
+R1(config-subif)#descrip
+R1(config-subif)#description NATIVE_VLAN_1000
+R1(config-subif)#no ip address
+R1(config-subif)#exit
+R1(config)#end
+R1#
+%SYS-5-CONFIG_I: Configured from console by console
+R1#show ip interfa
+
+R1#show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0/0   unassigned      YES unset  administratively down down 
+GigabitEthernet0/0/1   unassigned      YES unset  up                    up 
+GigabitEthernet0/0/1.100192.168.1.1     YES manual up                    up 
+GigabitEthernet0/0/1.200192.168.1.65    YES manual up                    up 
+GigabitEthernet0/0/1.1000unassigned      YES unset  up                    up 
+GigabitEthernet0/0/2   unassigned      YES unset  administratively down down 
+Vlan1                  unassigned      YES unset  administratively down down
+
+R1#copy runni
+R1#copy running-config startu
+R1#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+R1#
+R1#
+R1#en
+R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#interface g0/0/1.200
+R1(config-subif)#no ip address 192.168.1.65 255.255.255.192
+R1(config-subif)#ip address 192.168.1.65 255.255.255.224
+R1(config-subif)#end
+R1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+R1#show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0/0   unassigned      YES unset  administratively down down 
+GigabitEthernet0/0/1   unassigned      YES unset  up                    up 
+GigabitEthernet0/0/1.100192.168.1.1     YES manual up                    up 
+GigabitEthernet0/0/1.200192.168.1.65    YES manual up                    up 
+GigabitEthernet0/0/1.1000unassigned      YES unset  up                    up 
+GigabitEthernet0/0/2   unassigned      YES unset  administratively down down 
+Vlan1                  unassigned      YES unset  administratively down down
+R1#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+R1#
+```
 #### Шаг 5. Настройте G0/1 на R2, затем G0/0/0 и статическую маршрутизацию для обоих маршрутизаторов
 
 a.  Настройте G0/0/1 на R2 с первым IP-адресом подсети C, рассчитанным ранее.
+```cisco
+R2>en
+Password: 
+Password: 
+R2#en
+R2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R2(config)#interfa
+R2(config)#interface g0/0/1
+R2(config-if)#ip address 192.168.1.97 255.255.255.240
+R2(config-if)#no sh
+R2(config-if)#no shutdown 
 
+R2(config-if)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/1, changed state to up
+
+R2(config-if)#end
+R2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+R2#show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0/0   unassigned      YES unset  administratively down down 
+GigabitEthernet0/0/1   192.168.1.97    YES manual up                    up 
+GigabitEthernet0/0/2   unassigned      YES unset  administratively down down 
+Vlan1                  unassigned      YES unset  administratively down down
+R2#
+R2#copy run
+R2#copy running-config strt
+R2#copy running-config star
+R2#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+R2#
+```
 b.  Настройте интерфейс G0/0/0 для каждого маршрутизатора на основе приведенной выше таблицы IP-адресации.
 
-c.  Настройте маршрут по умолчанию на каждом маршрутизаторе, указываемом на IP-адрес G0/0/0 на другом маршрутизаторе.
+```cisco
+R1>en
+Password: 
+R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#interface g0/0/0
+R1(config-if)#ip address 10.0.0.1 255.255.255.252
+R1(config-if)#no sh
+R1(config-if)#no shutdown 
 
+R1(config-if)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/0, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/0, changed state to up
+
+R1(config-if)#end
+R1#
+
+R1#show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0/0   10.0.0.1        YES manual up                    up 
+GigabitEthernet0/0/1   unassigned      YES unset  up                    up 
+GigabitEthernet0/0/1.100192.168.1.1     YES manual up                    up 
+GigabitEthernet0/0/1.200192.168.1.65    YES manual up                    up 
+GigabitEthernet0/0/1.1000unassigned      YES unset  up                    up 
+GigabitEthernet0/0/2   unassigned      YES unset  administratively down down 
+Vlan1                  unassigned      YES unset  administratively down down
+```
+
+```cisco
+
+R2(config)#interface g0/0/0
+R2(config-if)#ip address 10.0.0.1 255.255.255.252
+R2(config-if)#no sh
+R2(config-if)#no shutdown 
+
+R2(config-if)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0/0, changed state to up
+
+R2(config-if)#end
+R2#
+
+R2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R2(config)#interface g0/0/0
+R2(config-if)#no ip address 10.0.0.1 255.255.255.252
+R2(config-if)#ip address 10.0.0.2 255.255.255.252
+R2(config-if)#no shutdown 
+R2(config-if)#end
+R2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+R2#show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0/0   10.0.0.2        YES manual up                    down 
+GigabitEthernet0/0/1   192.168.1.97    YES manual up                    up 
+GigabitEthernet0/0/2   unassigned      YES unset  administratively down down 
+Vlan1                  unassigned      YES unset  administratively down down
+R2#
+```
+
+c.  Настройте маршрут по умолчанию на каждом маршрутизаторе, указываемом на IP-адрес G0/0/0 на другом маршрутизаторе.
+```cisco
+R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#ip route 0.0.0.0 0.0.0.0 10.0.0.2
+R1(config)#end
+R1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+R1#show ip rou
+R1#show ip route 
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       * - candidate default, U - per-user static route, o - ODR
+       P - periodic downloaded static route
+
+Gateway of last resort is 10.0.0.2 to network 0.0.0.0
+
+     10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       10.0.0.0/30 is directly connected, GigabitEthernet0/0/0
+L       10.0.0.1/32 is directly connected, GigabitEthernet0/0/0
+     192.168.1.0/24 is variably subnetted, 4 subnets, 3 masks
+C       192.168.1.0/26 is directly connected, GigabitEthernet0/0/1.100
+L       192.168.1.1/32 is directly connected, GigabitEthernet0/0/1.100
+C       192.168.1.64/27 is directly connected, GigabitEthernet0/0/1.200
+L       192.168.1.65/32 is directly connected, GigabitEthernet0/0/1.200
+S*   0.0.0.0/0 [1/0] via 10.0.0.2
+
+R1#copy run
+R1#copy running-config sta
+R1#copy running-config startup-config 
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+```
+
+```cisco
+R2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R2(config)#p route 0.0.0.0 0.0.0.0 10.0.0.1
+% Ambiguous command: "p route 0.0.0.0 0.0.0.0 10.0.0.1"
+R2(config)#ip route 0.0.0.0 0.0.0.0 10.0.0.1
+R2(config)#end
+R2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+R2#show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       * - candidate default, U - per-user static route, o - ODR
+       P - periodic downloaded static route
+
+Gateway of last resort is 10.0.0.1 to network 0.0.0.0
+
+     10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       10.0.0.0/30 is directly connected, GigabitEthernet0/0/0
+L       10.0.0.2/32 is directly connected, GigabitEthernet0/0/0
+     192.168.1.0/24 is variably subnetted, 2 subnets, 2 masks
+C       192.168.1.96/28 is directly connected, GigabitEthernet0/0/1
+L       192.168.1.97/32 is directly connected, GigabitEthernet0/0/1
+S*   0.0.0.0/0 [1/0] via 10.0.0.1
+
+R2#copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+```
 d.  Убедитесь, что статическая маршрутизация работает с помощью пинга до адреса G0/0/1 R2 от R1.
+<img width="824" height="587" alt="image" src="https://github.com/user-attachments/assets/a9725347-2cc1-429d-82bb-289cd9fd8d19" />
+
 
 e.  Сохраните текущую конфигурацию в файл загрузочной конфигурации.
+<img width="714" height="91" alt="image" src="https://github.com/user-attachments/assets/666a9ccf-d39c-4b5e-b650-28b8d57626c2" />
 
 #### Шаг 6. Настройте базовые параметры каждого коммутатора.
 
 a.  Присвойте коммутатору имя устройства.
-
-    *Откройте окно конфигурации*
-
 b.  Отключите поиск DNS, чтобы предотвратить попытки маршрутизатора неверно преобразовывать введенные команды таким образом, как будто они являются именами узлов.
-
 c.  Назначьте **class** в качестве зашифрованного пароля привилегированного режима EXEC.
-
 d.  Назначьте **cisco** в качестве пароля консоли и включите вход в систему по паролю.
-
 e.  Назначьте **cisco** в качестве пароля VTY и включите вход в систему по паролю.
-
 f.  Зашифруйте открытые пароли.
-
 g.  Создайте баннер с предупреждением о запрете несанкционированного доступа к устройству.
-
 h.  Сохраните текущую конфигурацию в файл загрузочной конфигурации.
-
 i.  Установите часы на маршрутизаторе на сегодняшнее время и дату.
-
-> **Примечание.** Вопросительный знак (**?**) позволяет открыть справку с правильной последовательностью параметров, необходимых для выполнения этой команды.
-
 j.  Скопируйте текущую конфигурацию в файл загрузочной конфигурации.
+
+```cisco
+Switch>
+Switch>en
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S1
+R1(config)#hostname S1
+
+S1(config)#no ip dom
+S1(config)#no ip domain-lookup
+	
+S1(config)#enable secret class
+S1(config)#line console 0
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+S1(config)#line vty 0 15
+S1(config-line)#password cisco
+S1(config-line)#login
+S1(config-line)#exit
+
+S1(config)#service password-en
+S1(config)#service password-encryption 
+S1(config)#banner motd #Unauthorized access is prohibited DZ_Maxim!#
+S1(config)#exit
+S1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+S1#clock set 22:23:00 22 Mar 2026
+S1#copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S1#
+```
+
+```cisco
+Switch>
+Switch>en
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S2
+S2(config)#ip domain-l
+S2(config)#ip domain-lookup 
+S2(config)#enable secret class
+S2(config)#line console 0
+S2(config-line)#password cisco
+S2(config-line)#login
+S2(config-line)#exit
+S2(config)#line vty 0 15
+S2(config-line)#password cisco
+S2(config-line)#login
+S2(config-line)#exit
+S2(config)#service password-encryption
+S2(config)##banner motd #Unauthorized access is prohibited! DZ_Maxim#
+           ^
+% Invalid input detected at '^' marker.
+	
+S2(config)#banner motd #Unauthorized access is prohibited! DZ_Maxim#
+S2(config)#exit
+S2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+S2#clock set 22:29:00 22 Mar 2026
+S2#opy running-config startup-config
+       ^
+% Invalid input detected at '^' marker.
+	
+S2#
+S2#copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+S2#
+```
 
 #### Шаг 7. Создайте сети VLAN на коммутаторе S1.
 
-> Примечание. S2 настроен только с базовыми настройками.
 
 a.  Создайте необходимые VLAN на коммутаторе 1 и присвойте им имена из приведенной выше таблицы.
 
+```cisco
+S1>en
+Password: 
+S1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+S1(config)#vlan 100
+S1(config-vlan)#name Clients
+S1(config-vlan)#exit
+S1(config)#vlan 200
+S1(config-vlan)#name Management
+S1(config-vlan)#exit
+S1(config)#vlan 999
+S1(config-vlan)#name Parking_Lot
+S1(config-vlan)#exit
+S1(config)#vlan 100
+S1(config-vlan)#exit
+S1(config)#vlan 1000
+S1(config-vlan)#name Native
+S1(config-vlan)#exit
+S1(config)#
+```
 b.  Настройте и активируйте интерфейс управления на S1 (VLAN 200), используя второй IP-адрес из подсети, рассчитанный ранее. Кроме того установите шлюз по умолчанию на S1.
-
 c.  Настройте и активируйте интерфейс управления на S2 (VLAN 1), используя второй IP-адрес из подсети, рассчитанный ранее. Кроме того, установите шлюз по умолчанию на S2
-
 d.  Назначьте все неиспользуемые порты S1 VLAN Parking_Lot, настройте их для статического режима доступа и административно деактивируйте их. На S2 административно деактивируйте все неиспользуемые порты.
 
-> **Примечание.** Команда `interface range` полезна для выполнения этой задачи с минимальным количеством команд.
-
-*Закройте окно настройки.*
+<img width="1032" height="860" alt="image" src="https://github.com/user-attachments/assets/b42f7a16-df2d-44b6-9bb1-39f1ab5f5c42" />
 
 #### Шаг 8. Назначьте сети VLAN соответствующим интерфейсам коммутатора.
 
