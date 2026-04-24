@@ -62,54 +62,91 @@
 
 ## Инструкции
 
-### Часть 1: Создание сети и настройка основных параметров устройства
+# Отчёт по лабораторной работе: Базовая настройка коммутатора и маршрутизаторов
 
-В первой части лабораторной работы вам предстоит создать топологию сети и настроить базовые параметры для маршрутизаторов и коммутаторов.
+## Шаг 2. Настройка базовых параметров коммутатора (S1/S2)
 
-#### Шаг 1: Создайте сеть согласно топологии.
+| Пункт | Описание | Команда настройки | Команда проверки | 
+|-------|----------|-------------------|------------------|
+| a | Присвоение имени устройству | `hostname S1` | `show running-config \| include hostname` |
+| b | Отключение поиска DNS | `no ip domain-lookup` | `show running-config \| include no ip domain-lookup` | 
+| c | Зашифрованный пароль привилегированного режима (`class`) | `enable secret class` | `show running-config \| include enable secret` | 
+| d | Пароль консоли (`cisco`) и вход по паролю | `line con 0`<br>`password cisco`<br>`login` | `show running-config \| section line con 0` | 
+| e | Пароль VTY (`cisco`) и вход по паролю | `line vty 0 4`<br>`password cisco`<br>`login` | `show running-config \| section line vty` | 
+| f | Шифрование открытых паролей | `service password-encryption` | `show running-config \| include service password-encryption` | 
+| g | Баннер с предупреждением | `banner motd ^CUnauthorized access is prohibited!^C` | `show running-config \| include banner` | 
+| h | Отключение неиспользуемых портов | `interface range fa0/1-24, g0/1-2`<br>`shutdown` | `show running-config \| include shutdown` |
+| i | Сохранение конфигурации | `copy running-config startup-config` | `show startup-config` |
 
-Подключите устройства, как показано в топологии, и подсоедините необходимые кабели.
+---
 
-#### Шаг 2: Настройте базовые параметры каждого коммутатора. (необязательно)
+## Шаг 3. Базовая настройка маршрутизаторов (R1 и R2)
 
-**Откройте окно конфигурации**
+### Команды настройки (выполняются на R1 и R2):
 
-a. Присвойте коммутатору имя устройства.
-b. Отключите поиск DNS, чтобы предотвратить попытки коммутатора неверно преобразовывать введенные команды таким образом, как будто они являются именами узлов.
-c. Назначите **class** в качестве зашифрованного пароля привилегированного режима EXEC.
-d. Назначьте **cisco** в качестве пароля консоли и включите вход в систему по паролю.
-e. Назначьте **cisco** в качестве пароля VTY и включите вход в систему по паролю.
-f. Зашифруйте открытые пароли.
-g. Создайте баннер с предупреждением о запрете несанкционированного доступа к устройству.
-h. Отключите все неиспользуемые порты.
-i. Сохраните текущую конфигурацию в файл загрузочной конфигурации.
-
-**Закройте окно настройки.**
-
-#### Шаг 3: Произведите базовую настройку маршрутизаторов.
-
-**Откройте окно конфигурации**
-
-a. Назначьте маршрутизатору имя устройства.
-b. Отключите поиск DNS, чтобы предотвратить попытки маршрутизатора неверно преобразовывать введенные команды таким образом, как будто они являются именами узлов.
-c. Назначьте **class** в качестве зашифрованного пароля привилегированного режима EXEC.
-d. Назначьте **cisco** в качестве пароля консоли и включите вход в систему по паролю.
-e. Назначьте **cisco** в качестве пароля VTY и включите вход в систему по паролю.
-f. Зашифруйте открытые пароли.
-g. Создайте баннер с предупреждением о запрете несанкционированного доступа к устройству.
-h. Активируйте IPv6-маршрутизацию с помощью команды `ipv6 unicast-routing`.
-i. Сохраните текущую конфигурацию в файл загрузочной конфигурации.
+```cisco
+enable
+configure terminal
+```
+# a. Имя устройства
+```cisco
+hostname R1   (или R2)
+```
+# b. Отключение поиска DNS
+```cisco
+no ip domain-lookup
+```
+# c. Зашифрованный пароль привилегированного режима
+```cisco
+enable secret class
+```
+# d. Пароль консоли
+```cisco
+line con 0
+ password cisco
+ login
+ exit
+```
+# e. Пароль VTY
+```cisco
+line vty 0 4
+ password cisco
+ login
+ exit
+```
+# f. Шифрование паролей
+```cisco
+service password-encryption
+```
+# g. Баннер
+```cisco
+banner motd ^CUnauthorized access is prohibited!^C
+```
+# h. Активация IPv6-маршрутизации
+```cisco
+ipv6 unicast-routing
+```
+# i. Сохранение конфигурации
+```cisco
+end
+copy running-config startup-config
+```
 
 #### Шаг 4: Настройка интерфейсов и маршрутизации для обоих маршрутизаторов.
 
 a. Настройте интерфейсы G0/0/0 и G0/0/1 на R1 и R2 с IPv6-адресами, указанными в таблице адресации.
 b. Настройте маршрут по умолчанию на каждом маршрутизаторе, который указывает на IP-адрес G0/0/0 на другом маршрутизаторе.
+
     *   На R1: `ipv6 route ::/0 2001:db8:acad:2::2`
     *   На R2: `ipv6 route ::/0 2001:db8:acad:2::1`
-c. Убедитесь, что маршрутизация работает с помощью пинга адреса G0/0/1 R2 (2001:db8:acad:3::1) с R1.
+    
+c. Убедитесь, что маршрутизация работает с помощью пинга адреса G0/0/1 R2 из R1.
+<img width="661" height="579" alt="2026-04-24_23-16" src="https://github.com/user-attachments/assets/0ca7617f-ac3c-42a8-ae0d-5f0b31f17db9" />
+
 d. Сохраните текущую конфигурацию в файл загрузочной конфигурации.
 
-**Закройте окно настройки.**
+<img width="792" height="132" alt="2026-04-24_23-19" src="https://github.com/user-attachments/assets/2d8a3dde-bc22-4c73-a134-1b8f8ffbc513" />
+
 
 ### Часть 2: Проверка назначения адреса SLAAC от R1
 
@@ -117,21 +154,13 @@ d. Сохраните текущую конфигурацию в файл заг
 
 Включите PC-A и убедитесь, что сетевой адаптер настроен для автоматической настройки IPv6.
 
-Через несколько минут результаты команды **ipconfig** должны показать, что PC-A присвоил себе адрес из сети 2001:db8:acad:1::/64.
+Через несколько минут результаты команды **ipconfig** должны показать, что PC-A присвоил себе адрес из сети 
 
-```cisco
-C:\Users\Student> ipconfig
-Настройка IP для Windows
-Ethernet adapter Ethernet0:
-   IPv6-адрес. . . . . . . . . . . . : 2001:db8:acad:1:5c43:ee7c:2959:da68
-   Временный IPv6-адрес. . . . . . . : 2001:db8:acad:1:3c64:e4f9:46e1:1f23
-   Link-local IPv6-адрес. . . . . . . : fe80::5c43:ee7c:2959:da68%6
-   IPv4-адрес. . . . . . . . . . . . . : 169.254.218.104
-   Маска подсети . . . . . . . . . . . : 255.255.0.0
-   Основной шлюз. . . . . . . . . . . . : fe80::1%6
-```
+<img width="725" height="634" alt="2026-04-24_23-51" src="https://github.com/user-attachments/assets/16546056-2582-46dd-9f94-863ff1ab9fa7" />
+
 Вопрос:
 Откуда взялась часть адреса с идентификатором хоста?
+* 290:2BFF:FE27:1D65 был сгенерирован автоматически методом SLAAC с использованием MAC-адреса PC-A.*
 
 ### Часть 3: Настройка и проверка сервера DHCPv6 без состояния на R1
 В части 3 выполняется настройка и проверка сервера DHCPv6 без состояния на R1. Цель состоит в том, чтобы предоставить PC-A информацию о DNS-сервере и домене, в то время как адрес хоста продолжает назначаться через SLAAC.
@@ -139,35 +168,8 @@ Ethernet adapter Ethernet0:
 #### Шаг 1: Более подробно изучите конфигурацию PC-A.
 a. Выполните команду ipconfig /all на PC-A и посмотрите на результат.
 
-```cisco
-C:\Users\Student> ipconfig /all
+<img width="762" height="520" alt="2026-04-24_23-58" src="https://github.com/user-attachments/assets/4467bd1f-485d-445b-92a4-1533b4fd1dd2" />
 
-Windows IP Configuration
-   Host Name . . . . . . . . . . . . : DESKTOP-3FR7RKA
-   Primary Dns Suffix . . . . . . . :
-   Node Type . . . . . . . . . . . . : Hybrid
-   IP Routing Enabled. . . . . . . . : No
-   WINS Proxy Enabled. . . . . . . . : No
-
-Ethernet adapter Ethernet0:
-   Connection-specific DNS Suffix . :
-   Description . . . . . . . . . . . : Intel(R) 82574L Gigabit Network Connection
-   Physical Address. . . . . . . . . : 00-50-56-83-63-6D
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
-   IPv6 Address. . . . . . . . . . . : 2001:db8:acad:1:5c43:ee7c:2959:da68(Preferred)
-   Temporary IPv6 Address. . . . . . : 2001:db8:acad:1:3c64:e4f9:46e1:1f23(Preferred)
-   Link-local IPv6 Address . . . . . : fe80::5c43:ee7c:2959:da68%6(Preferred)
-   IPv4 Address. . . . . . . . . . . : 169.254.218.104(Preferred)
-   Subnet Mask . . . . . . . . . . . : 255.255.0.0
-   Default Gateway . . . . . . . . . : fe80::1%6
-   DHCPv6 IAID . . . . . . . . . . . : 50334761
-   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-24-F5-CE-A2-00-50-56-B3-63-6D
-   DNS Servers . . . . . . . . . . . : fec0:0:0:ffff::1%1
-                                       fec0:0:0:ffff::2%1
-                                       fec0:0:0:ffff::3%1
-   NetBIOS over Tcpip. . . . . . . . : Enabled
-```
 b. Обратите внимание, что основной DNS-суффикс отсутствует. Также обратите внимание, что предоставленные адреса DNS-сервера являются адресами "локального сайта anycast", а не одноадресными адресами, как ожидалось.
 
 #### Шаг 2: Настройте R1 для предоставления DHCPv6 без состояния для PC-A.
@@ -175,156 +177,69 @@ b. Обратите внимание, что основной DNS-суффикс
 
 a. Создайте пул DHCP IPv6 на R1 с именем R1-STATELESS. В составе этого пула назначьте адрес DNS-сервера как 2001:db8:acad::254, а имя домена — как stateless.com.
 
-```cisco
-R1(config)# ipv6 dhcp pool R1-STATELESS
-R1(config-dhcp)# dns-server 2001:db8:acad::254
-R1(config-dhcp)# domain-name STATELESS.com
 b. Настройте интерфейс G0/0/1 на R1, чтобы установить флаг конфигурации OTHER (O-флаг) для локальной сети R1 и укажите только что созданный пул DHCP в качестве ресурса DHCP для этого интерфейса.
-```
-```cisco
-R1(config)# interface g0/0/1
-R1(config-if)# ipv6 nd other-config-flag
-R1(config-if)# ipv6 dhcp server R1-STATELESS
+
 c. Сохраните текущую конфигурацию в файл загрузочной конфигурации.
+
+<img width="539" height="534" alt="2026-04-25_00-12" src="https://github.com/user-attachments/assets/0daf56d4-153f-4e3f-8293-09ddecf610db" />
+
+
 d. Перезапустите PC-A.
 e. Проверьте вывод ipconfig /all и обратите внимание на изменения.
-```
-```cisco
-C:\Users\Student> ipconfig /all
+f. Тестирование подключения с помощью пинга IP-адреса интерфейса G0/0/1 R2 .
 
-Windows IP Configuration
-   Host Name . . . . . . . . . . . . : DESKTOP-3FR7RKA
-   Primary Dns Suffix . . . . . . . :
-   Node Type . . . . . . . . . . . . : Hybrid
-   IP Routing Enabled. . . . . . . . : No
-   WINS Proxy Enabled. . . . . . . . : No
-   DNS Suffix Search List. . . . . . : STATELESS.com
+<img width="660" height="947" alt="2026-04-25_00-18" src="https://github.com/user-attachments/assets/0c86445f-eaa8-4a4c-9a53-994e4c839764" />
 
-Ethernet adapter Ethernet0:
-   Connection-specific DNS Suffix . : STATELESS.com
-   Description . . . . . . . . . . . : Intel(R) 82574L Gigabit Network Connection
-   Physical Address. . . . . . . . . : 00-50-56-83-63-6D
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
-   IPv6 Address. . . . . . . . . . . : 2001:db8:acad:1:5c43:ee7c:2959:da68(Preferred)
-   Temporary IPv6 Address. . . . . . : 2001:db8:acad:1:3c64:e4f9:46e1:1f23(Preferred)
-   Link-local IPv6 Address . . . . . : fe80::5c43:ee7c:2959:da68%6(Preferred)
-   IPv4 Address. . . . . . . . . . . : 169.254.218.104(Preferred)
-   Subnet Mask . . . . . . . . . . . : 255.255.0.0
-   Default Gateway . . . . . . . . . : fe80::1%6
-   DHCPv6 IAID . . . . . . . . . . . : 50334761
-   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-24-F5-CE-A2-00-50-56-B3-63-6D
-   DNS Servers . . . . . . . . . . . : 2001:db8:acad::254
-   NetBIOS over Tcpip. . . . . . . . : Enabled
-   Connection-specific DNS Suffix Search List:
-                                       STATELESS.com
-```
-f. Тестирование подключения с помощью пинга IP-адреса интерфейса G0/0/1 R2 (2001:db8:acad:3::1).
+| Параметр | До настройки | После настройки |
+|----------|--------------|-----------------|
+| DNS Suffix | отсутствует | `STATELESS.com` |
+| DNS Servers | `::` | `2001:DB8:ACAD::254` |
+| DHCPv6 IAID | пусто | `1222992234` |
+| IPv6 Address | `2001:DB8:ACAD:1:290:2BFF:FE27:1D65` | `2001:DB8:ACAD:1:290:2BFF:FE27:1D65`|
 
 ### Часть 4: Настройка сервера DHCPv6 с сохранением состояния на R1
 В части 4 настраивается R1 для ответа на запросы DHCPv6 от локальной сети на R2. Сервер будет назначать не только параметры сети, но и сами IPv6-адреса.
 
-Откройте окно конфигурации
 
 a. Создайте пул DHCPv6 на R1 для сети 2001:db8:acad:3:aaa::/80. Это предоставит адреса локальной сети, подключенной к интерфейсу G0/0/1 на R2. В составе пула задайте DNS-сервер 2001:db8:acad::254 и задайте доменное имя STATEFUL.com.
 
-```cisco
-R1(config)# ipv6 dhcp pool R2-STATEFUL
-R1(config-dhcp)# address prefix 2001:db8:acad:3:aaa::/80
-R1(config-dhcp)# dns-server 2001:db8:acad::254
-R1(config-dhcp)# domain-name STATEFUL.com
 b. Назначьте только что созданный пул DHCPv6 интерфейсу g0/0/0 на R1.
-```
-```cisco
-R1(config)# interface g0/0/0
-R1(config-if)# ipv6 dhcp server R2-STATEFUL
-```
+<img width="751" height="347" alt="2026-04-25_00-36" src="https://github.com/user-attachments/assets/6834c260-0522-4ec2-bcc0-7e2338bd7df7" />
+
 
 ### Часть 5: Настройка и проверка ретрансляции DHCPv6 на R2
 В части 5 необходимо настроить и проверить ретрансляцию DHCPv6 на R2, позволяя PC-B получать IPv6-адрес от сервера R1, который находится в другой сети.
 
 #### Шаг 1: Включите PC-B и проверьте адрес SLAAC, который он генерирует.
-```cisco
-C:\Users\Student> ipconfig /all
-
-Windows IP Configuration
-   Host Name . . . . . . . . . . . . : DESKTOP-3FR7RKA
-   Primary Dns Suffix . . . . . . . :
-   Node Type . . . . . . . . . . . . : Hybrid
-   IP Routing Enabled. . . . . . . . : No
-   WINS Proxy Enabled. . . . . . . . : No
-
-Ethernet adapter Ethernet0:
-   Connection-specific DNS Suffix . :
-   Description . . . . . . . . . . . : Intel(R) 82574L Gigabit Network Connection
-   Physical Address. . . . . . . . . : 00-50-56-B3-7B-06
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
-   IPv6 Address. . . . . . . . . . . : 2001:db8:acad:3:a0f3:3d39:f9fb:a020(Preferred)
-   Temporary IPv6 Address. . . . . . : 2001:db8:acad:3:d4f3:7b16:eeee:b2b5(Preferred)
-   Link-local IPv6 Address . . . . . : fe80::a0f3:3d39:f9fb:a020%6(Preferred)
-   IPv4 Address. . . . . . . . . . . : 169.254.160.32(Preferred)
-   Subnet Mask . . . . . . . . . . . : 255.255.0.0
-   Default Gateway . . . . . . . . . : fe80::2%6
-   DHCPv6 IAID . . . . . . . . . . . : 50334761
-   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-24-F2-08-38-00-50-56-B3-7B-06
-   DNS Servers . . . . . . . . . . . : fec0:0:0:ffff::1%1
-                                       fec0:0:0:ffff::2%1
-                                       fec0:0:0:ffff::3%1
-   NetBIOS over Tcpip. . . . . . . . : Enabled
-```
+<img width="815" height="454" alt="2026-04-25_00-47" src="https://github.com/user-attachments/assets/01a75397-c253-4328-9a44-542ff18c9266" />
 
 Обратите внимание на вывод: используется префикс 2001:db8:acad:3::/64, но адрес сгенерирован через SLAAC, а информация о DNS отсутствует.
 
-#### Шаг 2: Настройте R2 в качестве агента DHCP-ретрансляции для локальной сети на G0/0/1.
-Откройте окно конфигурации
+### ❗ Шаг 2: Настройте R2 в качестве агента DHCP-ретрансляции для локальной сети на G0/0/1 — **АЛЬТЕРНАТИВНЫЙ ВАРИАНТ** *(функция Relay отсутствует)*
 
 a. Настройте команду ipv6 dhcp relay на интерфейсе R2 G0/0/1, указав адрес назначения — интерфейс G0/0/0 на R1 (2001:db8:acad:2::1). Также настройте команду managed-config-flag (M-флаг), чтобы указать хостам использовать состояниеful DHCPv6.
-
 ```cisco
+R2# conf t
+R2(config)# ipv6 unicast-routing
+R2(config)# ipv6 dhcp pool R2-STATEFUL
+R2(config-dhcp)# address prefix 2001:db8:acad:3::/64
+R2(config-dhcp)# dns-server 2001:db8:acad::254
+R2(config-dhcp)# domain-name STATEFUL.com
+R2(config-dhcp)# exit
 R2(config)# interface g0/0/1
 R2(config-if)# ipv6 nd managed-config-flag
-R2(config-if)# ipv6 dhcp relay destination 2001:db8:acad:2::1 g0/0/0
+R2(config-if)# ipv6 dhcp server R2-STATEFUL
+R2(config-if)# end
+R2# write memory
 ```
-
 b. Сохраните конфигурацию.
 
-Закройте окно настройки.
+```cisco
+R2#copy running-config startup-config
+```
 
 #### Шаг 3: Попытка получить IPv6-адрес от DHCPv6 на PC-B.
 a. Перезапустите PC-B.
 b. Откройте командную строку на PC-B и выполните команду ipconfig /all и проверьте выходные данные, чтобы увидеть результаты операции ретрансляции DHCPv6.
-
-```cisco
-C:\Users\Student> ipconfig /all
-
-Windows IP Configuration
-   Host Name . . . . . . . . . . . . : DESKTOP-3FR7RKA
-   Primary Dns Suffix . . . . . . . :
-   Node Type . . . . . . . . . . . . : Hybrid
-   IP Routing Enabled. . . . . . . . : No
-   WINS Proxy Enabled. . . . . . . . : No
-   DNS Suffix Search List. . . . . . : STATEFUL.com
-
-Ethernet adapter Ethernet0:
-   Connection-specific DNS Suffix . : STATEFUL.com
-   Description . . . . . . . . . . . : Intel(R) 82574L Gigabit Network Connection
-   Physical Address. . . . . . . . . : 00-50-56-B3-7B-06
-   DHCP Enabled. . . . . . . . . . . : Yes
-   Autoconfiguration Enabled . . . . : Yes
-   IPv6 Address. . . . . . . . . . . : 2001:db8:acad:3:aaaa:7104:8b7d:5402(Preferred)
-   Lease Obtained. . . . . . . . . . : Sunday, October 6, 2019 3:27:13 PM
-   Lease Expires . . . . . . . . . . : Tuesday, October 8, 2019 3:27:13 PM
-   Link-local IPv6 Address . . . . . : fe80::a0f3:3d39:f9fb:a020%6(Preferred)
-   IPv4 Address. . . . . . . . . . . : 169.254.160.32(Preferred)
-   Subnet Mask . . . . . . . . . . . : 255.255.0.0
-   Default Gateway . . . . . . . . . : fe80::2%6
-   DHCPv6 IAID . . . . . . . . . . . : 50334761
-   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-24-F2-08-38-00-50-56-B3-7B-06
-   DNS Servers . . . . . . . . . . . : 2001:db8:acad::254
-   NetBIOS over Tcpip. . . . . . . . : Enabled
-   Connection-specific DNS Suffix Search List:
-                                       STATEFUL.com
-```
-c. Проверьте подключение с помощью пинга IP-адреса интерфейса R1 G0/0/1 (2001:db8:acad:1::1).
+<img width="807" height="892" alt="2026-04-25_00-53" src="https://github.com/user-attachments/assets/68366e25-09ad-424f-a9ba-44fd873b5ca2" />
 
